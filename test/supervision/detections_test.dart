@@ -1,10 +1,10 @@
 import 'package:test/test.dart';
-import 'package:dart_supervision/dart_supervision.dart';
+import 'package:dart_supervision/dart_supervision.dart' as sv;
 
 void main() {
   group('Detections', () {
     test('creates empty detections', () {
-      final detections = Detections.empty();
+      final detections = sv.Detections.empty();
 
       expect(detections.isEmpty, isTrue);
       expect(detections.length, equals(0));
@@ -12,15 +12,15 @@ void main() {
     });
 
     test('creates detections with data', () {
-      final xyxy = NDArray(
+      final xyxy = sv.NDArray(
         [2, 4],
         data: [10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0],
       );
 
-      final confidence = NDArray([2], data: [0.9, 0.8]);
-      final classId = NDArray([2], data: [1.0, 2.0]);
+      final confidence = sv.NDArray([2], data: [0.9, 0.8]);
+      final classId = sv.NDArray([2], data: [1.0, 2.0]);
 
-      final detections = Detections(
+      final detections = sv.Detections(
         xyxy: xyxy,
         confidence: confidence,
         classId: classId,
@@ -34,23 +34,23 @@ void main() {
     });
 
     test('validates input dimensions', () {
-      final badXyxy = NDArray([2, 3]); // Should be [N, 4]
+      final badXyxy = sv.NDArray([2, 3]); // Should be [N, 4]
 
-      expect(() => Detections(xyxy: badXyxy), throwsArgumentError);
+      expect(() => sv.Detections(xyxy: badXyxy), throwsArgumentError);
     });
 
     test('validates confidence dimensions', () {
-      final xyxy = NDArray([2, 4]);
-      final badConfidence = NDArray([3]); // Should match N=2
+      final xyxy = sv.NDArray([2, 4]);
+      final badConfidence = sv.NDArray([3]); // Should match N=2
 
       expect(
-        () => Detections(xyxy: xyxy, confidence: badConfidence),
+        () => sv.Detections(xyxy: xyxy, confidence: badConfidence),
         throwsArgumentError,
       );
     });
 
     test('subsets detections by indices', () {
-      final xyxy = NDArray(
+      final xyxy = sv.NDArray(
         [3, 4],
         data: [
           10.0,
@@ -68,11 +68,11 @@ void main() {
         ],
       );
 
-      final confidence = NDArray([3], data: [0.9, 0.8, 0.7]);
+      final confidence = sv.NDArray([3], data: [0.9, 0.8, 0.7]);
 
-      final detections = Detections(xyxy: xyxy, confidence: confidence);
+      final detections = sv.Detections(xyxy: xyxy, confidence: confidence);
 
-      final indices = NDArray(
+      final indices = sv.NDArray(
         [2],
         data: [0.0, 2.0],
       ); // First and third detection
@@ -86,14 +86,14 @@ void main() {
     });
 
     test('validates subset indices', () {
-      final detections = Detections(xyxy: NDArray([2, 4]));
-      final badIndices = NDArray([1], data: [5.0]); // Index out of bounds
+      final detections = sv.Detections(xyxy: sv.NDArray([2, 4]));
+      final badIndices = sv.NDArray([1], data: [5.0]); // Index out of bounds
 
       expect(() => detections[badIndices], throwsRangeError);
     });
 
     test('gets anchor coordinates', () {
-      final xyxy = NDArray(
+      final xyxy = sv.NDArray(
         [2, 4],
         data: [
           0.0, 0.0, 10.0, 10.0, // Box 1: center = (5, 5)
@@ -101,7 +101,7 @@ void main() {
         ],
       );
 
-      final detections = Detections(xyxy: xyxy);
+      final detections = sv.Detections(xyxy: xyxy);
 
       final centers = detections.getAnchorsCoordinates(anchor: 'center');
       expect(centers.shape, equals([2, 2]));
@@ -122,7 +122,7 @@ void main() {
     });
 
     test('applies NMS filtering', () {
-      final xyxy = NDArray(
+      final xyxy = sv.NDArray(
         [3, 4],
         data: [
           0.0, 0.0, 10.0, 10.0, // Box 1
@@ -131,9 +131,9 @@ void main() {
         ],
       );
 
-      final confidence = NDArray([3], data: [0.9, 0.8, 0.7]);
+      final confidence = sv.NDArray([3], data: [0.9, 0.8, 0.7]);
 
-      final detections = Detections(xyxy: xyxy, confidence: confidence);
+      final detections = sv.Detections(xyxy: xyxy, confidence: confidence);
       final filtered = detections.withNms(threshold: 0.5);
 
       expect(filtered.length, equals(2)); // Should keep boxes 1 and 3
@@ -144,7 +144,7 @@ void main() {
     });
 
     test('handles empty detections in anchor coordinates', () {
-      final empty = Detections.empty();
+      final empty = sv.Detections.empty();
       final anchors = empty.getAnchorsCoordinates();
 
       expect(anchors.shape, equals([0, 2]));

@@ -1,17 +1,17 @@
 import 'package:test/test.dart';
-import 'package:dart_supervision/dart_supervision.dart';
+import 'package:dart_supervision/dart_supervision.dart' as sv;
 import 'dart:math' as math;
 
 void main() {
   group('Cholesky Decomposition', () {
     test('cho_factor computes correct decomposition for simple 2x2 matrix', () {
       // Test case from SciPy documentation
-      final a = NDArray.fromList([
+      final a = sv.NDArray.fromList([
         [4.0, 2.0],
         [2.0, 3.0],
       ]);
 
-      final result = LinAlg.choFactor(a, lower: true);
+      final result = sv.LinAlg.choFactor(a, lower: true);
       final l = result.factorization;
 
       expect(result.lower, isTrue);
@@ -31,12 +31,12 @@ void main() {
     });
 
     test('cho_factor computes correct upper triangular decomposition', () {
-      final a = NDArray.fromList([
+      final a = sv.NDArray.fromList([
         [4.0, 2.0],
         [2.0, 3.0],
       ]);
 
-      final result = LinAlg.choFactor(a, lower: false);
+      final result = sv.LinAlg.choFactor(a, lower: false);
       final u = result.factorization;
 
       expect(result.lower, isFalse);
@@ -56,13 +56,13 @@ void main() {
     });
 
     test('cho_factor handles 3x3 matrix correctly', () {
-      final a = NDArray.fromList([
+      final a = sv.NDArray.fromList([
         [8.0, 2.0, 3.0],
         [2.0, 9.0, 3.0],
         [3.0, 3.0, 6.0],
       ]);
 
-      final result = LinAlg.choFactor(a, lower: true);
+      final result = sv.LinAlg.choFactor(a, lower: true);
       final l = result.factorization;
 
       // Verify L * L^T = A
@@ -81,35 +81,35 @@ void main() {
     });
 
     test('cho_factor throws error for non-positive definite matrix', () {
-      final a = NDArray.fromList([
+      final a = sv.NDArray.fromList([
         [1.0, 2.0],
         [2.0, 1.0], // This matrix has determinant 1-4 = -3 < 0
       ]);
 
-      expect(() => LinAlg.choFactor(a), throwsA(isA<LinAlgError>()));
+      expect(() => sv.LinAlg.choFactor(a), throwsA(isA<sv.LinAlgError>()));
     });
 
     test('cho_factor throws error for non-square matrix', () {
-      final a = NDArray.fromList([
+      final a = sv.NDArray.fromList([
         [1.0, 2.0, 3.0],
         [4.0, 5.0, 6.0],
       ]);
 
-      expect(() => LinAlg.choFactor(a), throwsArgumentError);
+      expect(() => sv.LinAlg.choFactor(a), throwsArgumentError);
     });
 
     test('cho_factor handles empty matrix', () {
-      final a = NDArray([0, 0]);
-      final result = LinAlg.choFactor(a);
+      final a = sv.NDArray([0, 0]);
+      final result = sv.LinAlg.choFactor(a);
 
       expect(result.factorization.shape, equals([0, 0]));
     });
 
     test('cho_factor handles 1x1 matrix', () {
-      final a = NDArray.fromList([
+      final a = sv.NDArray.fromList([
         [4.0],
       ]);
-      final result = LinAlg.choFactor(a, lower: true);
+      final result = sv.LinAlg.choFactor(a, lower: true);
 
       expect(result.factorization[[0, 0]], closeTo(2.0, 1e-10));
 
@@ -122,14 +122,14 @@ void main() {
 
   group('Cholesky Solve', () {
     test('cho_solve solves simple 2x2 system correctly', () {
-      final a = NDArray.fromList([
+      final a = sv.NDArray.fromList([
         [4.0, 2.0],
         [2.0, 3.0],
       ]);
-      final b = NDArray.fromList([8.0, 7.0]);
+      final b = sv.NDArray.fromList([8.0, 7.0]);
 
-      final chol = LinAlg.choFactor(a, lower: true);
-      final x = LinAlg.choSolve(chol, b);
+      final chol = sv.LinAlg.choFactor(a, lower: true);
+      final x = sv.LinAlg.choSolve(chol, b);
 
       expect(x.shape, equals([2]));
 
@@ -140,14 +140,14 @@ void main() {
     });
 
     test('cho_solve works with upper triangular factorization', () {
-      final a = NDArray.fromList([
+      final a = sv.NDArray.fromList([
         [4.0, 2.0],
         [2.0, 3.0],
       ]);
-      final b = NDArray.fromList([8.0, 7.0]);
+      final b = sv.NDArray.fromList([8.0, 7.0]);
 
-      final chol = LinAlg.choFactor(a, lower: false);
-      final x = LinAlg.choSolve(chol, b);
+      final chol = sv.LinAlg.choFactor(a, lower: false);
+      final x = sv.LinAlg.choSolve(chol, b);
 
       // Verify A * x = b
       final ax = a.dot(x.reshape([2, 1])).flatten();
@@ -156,17 +156,17 @@ void main() {
     });
 
     test('cho_solve handles multiple right-hand sides', () {
-      final a = NDArray.fromList([
+      final a = sv.NDArray.fromList([
         [4.0, 2.0],
         [2.0, 3.0],
       ]);
-      final b = NDArray.fromList([
+      final b = sv.NDArray.fromList([
         [8.0, 6.0],
         [7.0, 5.0],
       ]);
 
-      final chol = LinAlg.choFactor(a, lower: true);
-      final x = LinAlg.choSolve(chol, b);
+      final chol = sv.LinAlg.choFactor(a, lower: true);
+      final x = sv.LinAlg.choSolve(chol, b);
 
       expect(x.shape, equals([2, 2]));
 
@@ -184,15 +184,15 @@ void main() {
     });
 
     test('cho_solve handles 3x3 system', () {
-      final a = NDArray.fromList([
+      final a = sv.NDArray.fromList([
         [8.0, 2.0, 3.0],
         [2.0, 9.0, 3.0],
         [3.0, 3.0, 6.0],
       ]);
-      final b = NDArray.fromList([1.0, 1.0, 1.0]);
+      final b = sv.NDArray.fromList([1.0, 1.0, 1.0]);
 
-      final chol = LinAlg.choFactor(a, lower: true);
-      final x = LinAlg.choSolve(chol, b);
+      final chol = sv.LinAlg.choFactor(a, lower: true);
+      final x = sv.LinAlg.choSolve(chol, b);
 
       expect(x.shape, equals([3]));
 
@@ -204,39 +204,39 @@ void main() {
     });
 
     test('cho_solve validates input dimensions', () {
-      final a = NDArray.fromList([
+      final a = sv.NDArray.fromList([
         [4.0, 2.0],
         [2.0, 3.0],
       ]);
-      final badB = NDArray.fromList([1.0, 2.0, 3.0]); // Wrong size
+      final badB = sv.NDArray.fromList([1.0, 2.0, 3.0]); // Wrong size
 
-      final chol = LinAlg.choFactor(a);
+      final chol = sv.LinAlg.choFactor(a);
 
-      expect(() => LinAlg.choSolve(chol, badB), throwsArgumentError);
+      expect(() => sv.LinAlg.choSolve(chol, badB), throwsArgumentError);
     });
 
     test('cho_solve handles empty system', () {
-      final a = NDArray([0, 0]);
-      final b = NDArray([0]);
+      final a = sv.NDArray([0, 0]);
+      final b = sv.NDArray([0]);
 
-      final chol = LinAlg.choFactor(a);
-      final x = LinAlg.choSolve(chol, b);
+      final chol = sv.LinAlg.choFactor(a);
+      final x = sv.LinAlg.choSolve(chol, b);
 
       expect(x.shape, equals([0]));
     });
 
     test('cho_solve from SciPy documentation example', () {
       // Example from SciPy documentation
-      final a = NDArray.fromList([
+      final a = sv.NDArray.fromList([
         [9.0, 3.0, 1.0, 5.0],
         [3.0, 7.0, 5.0, 1.0],
         [1.0, 5.0, 9.0, 2.0],
         [5.0, 1.0, 2.0, 6.0],
       ]);
-      final b = NDArray.fromList([1.0, 1.0, 1.0, 1.0]);
+      final b = sv.NDArray.fromList([1.0, 1.0, 1.0, 1.0]);
 
-      final chol = LinAlg.choFactor(a);
-      final x = LinAlg.choSolve(chol, b);
+      final chol = sv.LinAlg.choFactor(a);
+      final x = sv.LinAlg.choSolve(chol, b);
 
       // Verify A * x = b
       final ax = a.dot(x.reshape([4, 1])).flatten();
@@ -248,12 +248,12 @@ void main() {
 
   group('Cholesky Function', () {
     test('cholesky produces clean triangular matrix', () {
-      final a = NDArray.fromList([
+      final a = sv.NDArray.fromList([
         [4.0, 2.0],
         [2.0, 3.0],
       ]);
 
-      final l = LinAlg.cholesky(a, lower: true);
+      final l = sv.LinAlg.cholesky(a, lower: true);
 
       expect(l.shape, equals([2, 2]));
       expect(l[[0, 1]], equals(0.0)); // Upper triangle should be zero
@@ -269,12 +269,12 @@ void main() {
     });
 
     test('cholesky upper triangular', () {
-      final a = NDArray.fromList([
+      final a = sv.NDArray.fromList([
         [4.0, 2.0],
         [2.0, 3.0],
       ]);
 
-      final u = LinAlg.cholesky(a, lower: false);
+      final u = sv.LinAlg.cholesky(a, lower: false);
 
       expect(u.shape, equals([2, 2]));
       expect(u[[1, 0]], equals(0.0)); // Lower triangle should be zero
@@ -291,24 +291,24 @@ void main() {
   });
 
   group('Error Handling', () {
-    test('LinAlgError has proper message', () {
-      final error = LinAlgError('Test error message');
+    test('sv.LinAlgError has proper message', () {
+      final error = sv.LinAlgError('Test error message');
       expect(error.toString(), contains('Test error message'));
     });
 
     test('cho_factor handles singular matrix gracefully', () {
-      final a = NDArray.fromList([
+      final a = sv.NDArray.fromList([
         [1.0, 1.0],
         [1.0, 1.0], // Rank deficient matrix
       ]);
 
-      expect(() => LinAlg.choFactor(a), throwsA(isA<LinAlgError>()));
+      expect(() => sv.LinAlg.choFactor(a), throwsA(isA<sv.LinAlgError>()));
     });
 
     test('cho_factor validates 2D input', () {
-      final a = NDArray.fromList([1.0, 2.0, 3.0]); // 1D array
+      final a = sv.NDArray.fromList([1.0, 2.0, 3.0]); // 1D array
 
-      expect(() => LinAlg.choFactor(a), throwsArgumentError);
+      expect(() => sv.LinAlg.choFactor(a), throwsArgumentError);
     });
   });
 
@@ -319,7 +319,7 @@ void main() {
       final random = math.Random(42); // Fixed seed for reproducibility
 
       // Generate random matrix
-      final temp = NDArray([n, n]);
+      final temp = sv.NDArray([n, n]);
       for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
           temp[[i, j]] = random.nextDouble() - 0.5;
@@ -327,9 +327,9 @@ void main() {
       }
 
       // Make it symmetric positive definite: A = B^T * B + I
-      final a = temp.transpose().dot(temp) + NDArray.eye(n);
+      final a = temp.transpose().dot(temp) + sv.NDArray.eye(n);
 
-      final chol = LinAlg.choFactor(a, lower: true);
+      final chol = sv.LinAlg.choFactor(a, lower: true);
       final l = chol.factorization;
 
       // Verify reconstruction
@@ -347,7 +347,7 @@ void main() {
 
     test('solve maintains accuracy for larger systems', () {
       final n = 4;
-      final a = NDArray([n, n]);
+      final a = sv.NDArray([n, n]);
 
       // Create a well-conditioned symmetric positive definite matrix
       for (int i = 0; i < n; i++) {
@@ -362,9 +362,9 @@ void main() {
         }
       }
 
-      final b = NDArray.ones([n]);
-      final chol = LinAlg.choFactor(a, lower: true);
-      final x = LinAlg.choSolve(chol, b);
+      final b = sv.NDArray.ones([n]);
+      final chol = sv.LinAlg.choFactor(a, lower: true);
+      final x = sv.LinAlg.choSolve(chol, b);
 
       // Verify solution
       final ax = a.dot(x.reshape([n, 1])).flatten();

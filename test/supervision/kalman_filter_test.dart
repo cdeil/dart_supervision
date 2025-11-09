@@ -1,11 +1,11 @@
 import 'package:test/test.dart';
-import 'package:dart_supervision/dart_supervision.dart';
+import 'package:dart_supervision/dart_supervision.dart' as sv;
 
 void main() {
   group('Kalman Filter', () {
     test('initializes track state correctly', () {
-      final filter = KalmanFilter();
-      final measurement = NDArray(
+      final filter = sv.KalmanFilter();
+      final measurement = sv.NDArray(
         [4],
         data: [10.0, 20.0, 1.5, 30.0],
       ); // x, y, aspect, height
@@ -22,8 +22,8 @@ void main() {
     });
 
     test('predicts next state', () {
-      final filter = KalmanFilter();
-      final measurement = NDArray([4], data: [10.0, 20.0, 1.0, 30.0]);
+      final filter = sv.KalmanFilter();
+      final measurement = sv.NDArray([4], data: [10.0, 20.0, 1.0, 30.0]);
 
       final initResult = filter.initiate(measurement);
       final mean = initResult.$1.copy();
@@ -44,14 +44,14 @@ void main() {
     });
 
     test('updates state with measurement', () {
-      final filter = KalmanFilter();
-      final measurement1 = NDArray([4], data: [10.0, 20.0, 1.0, 30.0]);
+      final filter = sv.KalmanFilter();
+      final measurement1 = sv.NDArray([4], data: [10.0, 20.0, 1.0, 30.0]);
 
       final initResult = filter.initiate(measurement1);
       final mean = initResult.$1;
       final covariance = initResult.$2;
 
-      final measurement2 = NDArray([4], data: [12.0, 22.0, 1.0, 30.0]);
+      final measurement2 = sv.NDArray([4], data: [12.0, 22.0, 1.0, 30.0]);
       final updateResult = filter.update(mean, covariance, measurement2);
       final updatedMean = updateResult.$1;
       final updatedCov = updateResult.$2;
@@ -64,27 +64,27 @@ void main() {
     });
   });
 
-  group('STrack', () {
+  group('sv.STrack', () {
     test('initializes track correctly', () {
-      final filter = KalmanFilter();
-      final tlwh = NDArray(
+      final filter = sv.KalmanFilter();
+      final tlwh = sv.NDArray(
         [4],
         data: [10.0, 20.0, 30.0, 40.0],
       ); // top, left, width, height
 
-      final track = STrack(tlwh, 0.9, filter);
+      final track = sv.STrack(tlwh, 0.9, filter);
 
       expect(track.trackId, equals(1));
       expect(track.score, equals(0.9));
-      expect(track.state, equals(TrackState.tentative));
+      expect(track.state, equals(sv.TrackState.tentative));
       expect(track.timeSinceUpdate, equals(0));
       expect(track.hits, equals(1));
     });
 
     test('predicts track position', () {
-      final filter = KalmanFilter();
-      final tlwh = NDArray([4], data: [10.0, 20.0, 30.0, 40.0]);
-      final track = STrack(tlwh, 0.9, filter);
+      final filter = sv.KalmanFilter();
+      final tlwh = sv.NDArray([4], data: [10.0, 20.0, 30.0, 40.0]);
+      final track = sv.STrack(tlwh, 0.9, filter);
 
       track.predict();
 
@@ -94,11 +94,11 @@ void main() {
     });
 
     test('updates track with new detection', () {
-      final filter = KalmanFilter();
-      final tlwh = NDArray([4], data: [10.0, 20.0, 30.0, 40.0]);
-      final track = STrack(tlwh, 0.9, filter);
+      final filter = sv.KalmanFilter();
+      final tlwh = sv.NDArray([4], data: [10.0, 20.0, 30.0, 40.0]);
+      final track = sv.STrack(tlwh, 0.9, filter);
 
-      final newTlwh = NDArray([4], data: [12.0, 22.0, 30.0, 40.0]);
+      final newTlwh = sv.NDArray([4], data: [12.0, 22.0, 30.0, 40.0]);
       track.update(newTlwh, 0.8);
 
       expect(track.timeSinceUpdate, equals(0));
@@ -107,29 +107,29 @@ void main() {
     });
 
     test('marks track as missed', () {
-      final filter = KalmanFilter();
-      final tlwh = NDArray([4], data: [10.0, 20.0, 30.0, 40.0]);
-      final track = STrack(tlwh, 0.9, filter);
+      final filter = sv.KalmanFilter();
+      final tlwh = sv.NDArray([4], data: [10.0, 20.0, 30.0, 40.0]);
+      final track = sv.STrack(tlwh, 0.9, filter);
 
       track.markMissed();
-      expect(track.state, equals(TrackState.deleted)); // Tentative -> deleted
+      expect(track.state, equals(sv.TrackState.deleted)); // Tentative -> deleted
 
       // Confirmed track should not be deleted immediately
-      track.state = TrackState.confirmed;
+      track.state = sv.TrackState.confirmed;
       track.timeSinceUpdate = 0;
       track.markMissed();
-      expect(track.state, equals(TrackState.confirmed));
+      expect(track.state, equals(sv.TrackState.confirmed));
 
       // But should be deleted after too many misses
       track.timeSinceUpdate = 35;
       track.markMissed();
-      expect(track.state, equals(TrackState.deleted));
+      expect(track.state, equals(sv.TrackState.deleted));
     });
 
     test('transitions from tentative to confirmed', () {
-      final filter = KalmanFilter();
-      final tlwh = NDArray([4], data: [10.0, 20.0, 30.0, 40.0]);
-      final track = STrack(tlwh, 0.9, filter);
+      final filter = sv.KalmanFilter();
+      final tlwh = sv.NDArray([4], data: [10.0, 20.0, 30.0, 40.0]);
+      final track = sv.STrack(tlwh, 0.9, filter);
 
       expect(track.isTentative, isTrue);
       expect(track.isConfirmed, isFalse);
@@ -144,12 +144,12 @@ void main() {
     });
 
     test('gets xyxy format bbox', () {
-      final filter = KalmanFilter();
-      final tlwh = NDArray(
+      final filter = sv.KalmanFilter();
+      final tlwh = sv.NDArray(
         [4],
         data: [10.0, 20.0, 30.0, 40.0],
       ); // x=10, y=20, w=30, h=40
-      final track = STrack(tlwh, 0.9, filter);
+      final track = sv.STrack(tlwh, 0.9, filter);
 
       final xyxy = track.xyxy;
       expect(xyxy.shape, equals([4]));
@@ -160,18 +160,18 @@ void main() {
     });
 
     test('resets ID counter', () {
-      STrack.resetIdCounter(); // Reset before the test
-      final filter = KalmanFilter();
-      final tlwh = NDArray([4], data: [10.0, 20.0, 30.0, 40.0]);
+      sv.STrack.resetIdCounter(); // Reset before the test
+      final filter = sv.KalmanFilter();
+      final tlwh = sv.NDArray([4], data: [10.0, 20.0, 30.0, 40.0]);
 
-      final track1 = STrack(tlwh, 0.9, filter);
-      final track2 = STrack(tlwh, 0.9, filter);
+      final track1 = sv.STrack(tlwh, 0.9, filter);
+      final track2 = sv.STrack(tlwh, 0.9, filter);
 
       expect(track1.trackId, equals(1));
       expect(track2.trackId, equals(2));
 
-      STrack.resetIdCounter();
-      final track3 = STrack(tlwh, 0.9, filter);
+      sv.STrack.resetIdCounter();
+      final track3 = sv.STrack(tlwh, 0.9, filter);
       expect(track3.trackId, equals(1));
     });
   });

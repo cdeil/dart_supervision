@@ -1,10 +1,10 @@
 import 'package:test/test.dart';
-import 'package:dart_supervision/dart_supervision.dart';
+import 'package:dart_supervision/dart_supervision.dart' as sv;
 
 void main() {
   group('ByteTracker', () {
     test('creates tracker with default parameters', () {
-      final tracker = ByteTracker();
+      final tracker = sv.ByteTracker();
 
       expect(tracker.trackActivationThreshold, equals(0.25));
       expect(tracker.minimumMatchingThreshold, equals(0.8));
@@ -13,8 +13,8 @@ void main() {
     });
 
     test('handles empty detections', () {
-      final tracker = ByteTracker();
-      final emptyDetections = Detections.empty();
+      final tracker = sv.ByteTracker();
+      final emptyDetections = sv.Detections.empty();
 
       final result = tracker.updateWithDetections(emptyDetections);
 
@@ -22,16 +22,16 @@ void main() {
     });
 
     test('creates new tracks from high confidence detections', () {
-      final tracker = ByteTracker(
+      final tracker = sv.ByteTracker(
         trackActivationThreshold: 0.5,
       ); // Lower threshold
 
-      final detections = Detections(
-        xyxy: NDArray(
+      final detections = sv.Detections(
+        xyxy: sv.NDArray(
           [2, 4],
           data: [10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0],
         ),
-        confidence: NDArray([2], data: [0.9, 0.8]),
+        confidence: sv.NDArray([2], data: [0.9, 0.8]),
       );
 
       final result = tracker.updateWithDetections(detections);
@@ -41,11 +41,11 @@ void main() {
     });
 
     test('ignores low confidence detections', () {
-      final tracker = ByteTracker();
+      final tracker = sv.ByteTracker();
 
-      final lowConfDetections = Detections(
-        xyxy: NDArray([1, 4], data: [10.0, 20.0, 30.0, 40.0]),
-        confidence: NDArray([1], data: [0.1]), // Below threshold
+      final lowConfDetections = sv.Detections(
+        xyxy: sv.NDArray([1, 4], data: [10.0, 20.0, 30.0, 40.0]),
+        confidence: sv.NDArray([1], data: [0.1]), // Below threshold
       );
 
       final result = tracker.updateWithDetections(lowConfDetections);
@@ -54,24 +54,24 @@ void main() {
     });
 
     test('tracks objects across frames', () {
-      final tracker = ByteTracker(
+      final tracker = sv.ByteTracker(
         trackActivationThreshold: 0.5, // Lower threshold
         minimumMatchingThreshold: 0.3, // More lenient matching
       );
 
       // Frame 1: Initial detections
-      final frame1 = Detections(
-        xyxy: NDArray([1, 4], data: [10.0, 20.0, 30.0, 40.0]),
-        confidence: NDArray([1], data: [0.9]),
+      final frame1 = sv.Detections(
+        xyxy: sv.NDArray([1, 4], data: [10.0, 20.0, 30.0, 40.0]),
+        confidence: sv.NDArray([1], data: [0.9]),
       );
 
       final result1 = tracker.updateWithDetections(frame1);
       expect(result1.length, equals(1));
 
       // Frame 2: Object moved slightly
-      final frame2 = Detections(
-        xyxy: NDArray([1, 4], data: [11.0, 21.0, 31.0, 41.0]),
-        confidence: NDArray([1], data: [0.8]),
+      final frame2 = sv.Detections(
+        xyxy: sv.NDArray([1, 4], data: [11.0, 21.0, 31.0, 41.0]),
+        confidence: sv.NDArray([1], data: [0.8]),
       );
 
       final result2 = tracker.updateWithDetections(frame2);
@@ -84,12 +84,12 @@ void main() {
     });
 
     test('resets tracker state', () {
-      final tracker = ByteTracker(trackActivationThreshold: 0.5);
+      final tracker = sv.ByteTracker(trackActivationThreshold: 0.5);
 
       // Add some detections to create tracks
-      final detections = Detections(
-        xyxy: NDArray([1, 4], data: [10.0, 20.0, 30.0, 40.0]),
-        confidence: NDArray([1], data: [0.9]),
+      final detections = sv.Detections(
+        xyxy: sv.NDArray([1, 4], data: [10.0, 20.0, 30.0, 40.0]),
+        confidence: sv.NDArray([1], data: [0.9]),
       );
 
       tracker.updateWithDetections(detections);
@@ -107,10 +107,10 @@ void main() {
     });
 
     test('handles multiple objects', () {
-      final tracker = ByteTracker(trackActivationThreshold: 0.5);
+      final tracker = sv.ByteTracker(trackActivationThreshold: 0.5);
 
-      final detections = Detections(
-        xyxy: NDArray(
+      final detections = sv.Detections(
+        xyxy: sv.NDArray(
           [3, 4],
           data: [
             10.0,
@@ -127,7 +127,7 @@ void main() {
             130.0,
           ],
         ),
-        confidence: NDArray([3], data: [0.9, 0.8, 0.7]),
+        confidence: sv.NDArray([3], data: [0.9, 0.8, 0.7]),
       );
 
       final result = tracker.updateWithDetections(detections);
@@ -144,7 +144,7 @@ void main() {
     });
 
     test('string representation', () {
-      final tracker = ByteTracker();
+      final tracker = sv.ByteTracker();
       final str = tracker.toString();
 
       expect(str, contains('ByteTracker'));
@@ -156,17 +156,17 @@ void main() {
 
   group('Integration Tests', () {
     test('tracks multiple objects through multiple frames', () {
-      final tracker = ByteTracker(
+      final tracker = sv.ByteTracker(
         trackActivationThreshold: 0.5,
         minimumMatchingThreshold: 0.3,
       );
-      final results = <Detections>[];
+      final results = <sv.Detections>[];
 
       // Simulate 5 frames with 2 objects moving
       for (int frame = 0; frame < 5; frame++) {
         final offset = frame * 1.0; // Small movement
-        final detections = Detections(
-          xyxy: NDArray(
+        final detections = sv.Detections(
+          xyxy: sv.NDArray(
             [2, 4],
             data: [
               10.0 + offset,
@@ -179,7 +179,7 @@ void main() {
               140.0 - offset,
             ],
           ),
-          confidence: NDArray([2], data: [0.9, 0.8]),
+          confidence: sv.NDArray([2], data: [0.9, 0.8]),
         );
 
         final result = tracker.updateWithDetections(detections);
@@ -224,12 +224,12 @@ void main() {
     });
 
     test('demonstrates supervision-like workflow', () {
-      final tracker = ByteTracker(trackActivationThreshold: 0.5);
+      final tracker = sv.ByteTracker(trackActivationThreshold: 0.5);
 
       // Simulate video processing workflow
       for (int frame = 0; frame < 10; frame++) {
         // Create mock detections (like from YOLO)
-        final xyxy = NDArray(
+        final xyxy = sv.NDArray(
           [2, 4],
           data: [
             10.0 + frame, 20.0 + frame, 50.0 + frame, 60.0 + frame,
@@ -237,10 +237,10 @@ void main() {
           ],
         );
 
-        final confidence = NDArray([2], data: [0.8, 0.9]);
-        final classId = NDArray([2], data: [0.0, 1.0]); // person, car
+        final confidence = sv.NDArray([2], data: [0.8, 0.9]);
+        final classId = sv.NDArray([2], data: [0.0, 1.0]); // person, car
 
-        final detections = Detections(
+        final detections = sv.Detections(
           xyxy: xyxy,
           confidence: confidence,
           classId: classId,

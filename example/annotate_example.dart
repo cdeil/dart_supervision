@@ -1,29 +1,26 @@
 // Simplified example: read one image and annotate all frames in place.
 import 'dart:io';
 import 'package:image/image.dart' as img;
-import 'package:dart_supervision/dart_supervision.dart';
+import 'package:dart_supervision/dart_supervision.dart' as sv;
 
 void main() async {
   print('Loading image and detections...');
+
+  // TODO: change back to PNG, then fix it
 
   // Read the GIF image
   final gifBytes = await File('assets/people-walking.gif').readAsBytes();
   final image = img.decodeGif(gifBytes);
 
-  if (image == null) {
-    print('Failed to load GIF image');
-    return;
-  }
-
   // Load all detection data
-  final allDetections = await DetectionUtils.loadAllFramesFromJson(
+  final allDetections = await sv.DetectionUtils.loadAllFramesFromJson(
     'assets/people-walking-detections.json',
   );
 
   // Create annotators
   final boxAnnotator =
-      BoxAnnotator(color: img.ColorRgb8(255, 255, 255), thickness: 3);
-  final labelAnnotator = LabelAnnotator(
+      sv.BoxAnnotator(color: img.ColorRgb8(255, 255, 255), thickness: 3);
+  final labelAnnotator = sv.LabelAnnotator(
       textColor: img.ColorRgb8(255, 255, 255),
       backgroundColor: img.ColorRgb8(0, 0, 0));
 

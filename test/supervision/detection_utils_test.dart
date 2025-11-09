@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:dart_supervision/dart_supervision.dart';
+import 'package:dart_supervision/dart_supervision.dart' as sv;
 import 'dart:io';
 
 void main() {
@@ -15,7 +15,7 @@ void main() {
       }
 
       // Load detections from first frame
-      final detections = await DetectionUtils.loadFromJson(
+      final detections = await sv.DetectionUtils.loadFromJson(
         'assets/people-walking-detections.json',
         0,
       );
@@ -27,7 +27,7 @@ void main() {
       expect(detections.trackerId, isNotNull);
 
       // Get video info to check coordinate bounds (coordinates should be in pixel space)
-      final videoInfo = await DetectionUtils.getVideoInfo(
+      final videoInfo = await sv.DetectionUtils.getVideoInfo(
         'assets/people-walking-detections.json',
       );
       final videoData = videoInfo['video_info'] as Map;
@@ -61,7 +61,7 @@ void main() {
         return;
       }
 
-      final videoInfo = await DetectionUtils.getVideoInfo(
+      final videoInfo = await sv.DetectionUtils.getVideoInfo(
         'assets/people-walking-detections.json',
       );
 
@@ -80,8 +80,8 @@ void main() {
 
     test('should normalize and denormalize coordinates correctly', () {
       // Create test detections with pixel coordinates
-      final pixelDetections = Detections(
-        xyxy: NDArray([
+      final pixelDetections = sv.Detections(
+        xyxy: sv.NDArray([
           2,
           4
         ], data: [
@@ -94,7 +94,7 @@ void main() {
       const imageHeight = 1080;
 
       // Normalize coordinates
-      final normalized = DetectionUtils.normalizeCoordinates(
+      final normalized = sv.DetectionUtils.normalizeCoordinates(
         pixelDetections,
         imageWidth,
         imageHeight,
@@ -107,7 +107,7 @@ void main() {
       expect(normalized.xyxy[[1, 3]], closeTo(200.0 / imageHeight, 0.001));
 
       // Denormalize back to pixels
-      final denormalized = DetectionUtils.denormalizeCoordinates(
+      final denormalized = sv.DetectionUtils.denormalizeCoordinates(
         normalized,
         imageWidth,
         imageHeight,

@@ -1,4 +1,4 @@
-import 'package:dart_supervision/dart_supervision.dart';
+import 'package:dart_supervision/dart_supervision.dart' as sv;
 
 /// Demo showing the clean separation of NumPy-like functionality
 /// and computer vision tracking capabilities.
@@ -6,11 +6,11 @@ void main() {
   print('=== NumPy-like NDArray Demo ===');
 
   // Create arrays
-  final arr1 = NDArray.fromList([
+  final arr1 = sv.NDArray.fromList([
     [1.0, 2.0],
     [3.0, 4.0],
   ]);
-  final arr2 = NDArray.eye(2);
+  final arr2 = sv.NDArray.eye(2);
 
   print('Array 1:\n$arr1');
   print('Identity matrix:\n$arr2');
@@ -31,22 +31,22 @@ void main() {
   print('\n=== Computer Vision Tracking Demo ===');
 
   // Create mock detection data (like from YOLO)
-  final detections1 = Detections(
-    xyxy: NDArray(
+  final detections1 = sv.Detections(
+    xyxy: sv.NDArray(
       [2, 4],
       data: [
         100.0, 100.0, 200.0, 200.0, // Person bounding box
         300.0, 150.0, 400.0, 250.0, // Car bounding box
       ],
     ),
-    confidence: NDArray([2], data: [0.9, 0.8]),
-    classId: NDArray([2], data: [0.0, 1.0]), // 0=person, 1=car
+    confidence: sv.NDArray([2], data: [0.9, 0.8]),
+    classId: sv.NDArray([2], data: [0.0, 1.0]), // 0=person, 1=car
   );
 
   print('Frame 1 detections: ${detections1.length} objects');
 
   // Initialize ByteTracker (like supervision)
-  final tracker = ByteTracker(
+  final tracker = sv.ByteTracker(
     trackActivationThreshold: 0.7,
     minimumMatchingThreshold: 0.8,
   );
@@ -58,16 +58,16 @@ void main() {
   );
 
   // Simulate next frame with moved objects
-  final detections2 = Detections(
-    xyxy: NDArray(
+  final detections2 = sv.Detections(
+    xyxy: sv.NDArray(
       [2, 4],
       data: [
         105.0, 105.0, 205.0, 205.0, // Person moved slightly
         295.0, 145.0, 395.0, 245.0, // Car moved slightly
       ],
     ),
-    confidence: NDArray([2], data: [0.85, 0.9]),
-    classId: NDArray([2], data: [0.0, 1.0]),
+    confidence: sv.NDArray([2], data: [0.85, 0.9]),
+    classId: sv.NDArray([2], data: [0.0, 1.0]),
   );
 
   final tracked2 = tracker.updateWithDetections(detections2);

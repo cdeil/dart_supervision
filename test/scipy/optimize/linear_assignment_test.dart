@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:dart_supervision/dart_supervision.dart';
+import 'package:dart_supervision/dart_supervision.dart' as sv;
 
 void main() {
   group('LinearSumAssignment tests', () {
@@ -7,13 +7,13 @@ void main() {
       // Example from SciPy documentation:
       // cost = [[4, 1, 3], [2, 0, 5], [3, 2, 2]]
       // Expected solution: [(0,1), (1,0), (2,2)] with cost 5
-      final cost = NDArray.fromList([
+      final cost = sv.NDArray.fromList([
         [4.0, 1.0, 3.0],
         [2.0, 0.0, 5.0],
         [3.0, 2.0, 2.0],
       ]);
 
-      final result = LinearSumAssignment.solve(cost);
+      final result = sv.LinearSumAssignment.solve(cost);
 
       // Check that we have 3 assignments
       expect(result.rowIndices.length, equals(3));
@@ -34,13 +34,13 @@ void main() {
     });
 
     test('should handle rectangular matrices (more rows than columns)', () {
-      final cost = NDArray.fromList([
+      final cost = sv.NDArray.fromList([
         [1.0, 2.0],
         [3.0, 4.0],
         [5.0, 6.0],
       ]);
 
-      final result = LinearSumAssignment.solve(cost);
+      final result = sv.LinearSumAssignment.solve(cost);
 
       // Should assign 2 workers to 2 jobs
       expect(result.rowIndices.length, equals(2));
@@ -51,12 +51,12 @@ void main() {
     });
 
     test('should handle rectangular matrices (more columns than rows)', () {
-      final cost = NDArray.fromList([
+      final cost = sv.NDArray.fromList([
         [1.0, 2.0, 3.0],
         [4.0, 5.0, 6.0],
       ]);
 
-      final result = LinearSumAssignment.solve(cost);
+      final result = sv.LinearSumAssignment.solve(cost);
 
       // Should assign 2 workers to 2 jobs
       expect(result.rowIndices.length, equals(2));
@@ -67,13 +67,13 @@ void main() {
     });
 
     test('should handle maximization', () {
-      final cost = NDArray.fromList([
+      final cost = sv.NDArray.fromList([
         [4.0, 1.0, 3.0],
         [2.0, 0.0, 5.0],
         [3.0, 2.0, 2.0],
       ]);
 
-      final result = LinearSumAssignment.solve(cost, maximize: true);
+      final result = sv.LinearSumAssignment.solve(cost, maximize: true);
 
       // For maximization, the algorithm should find max weight matching
       // The negated minimum should give us the maximum
@@ -85,11 +85,11 @@ void main() {
     });
 
     test('should handle single element matrix', () {
-      final cost = NDArray.fromList([
+      final cost = sv.NDArray.fromList([
         [5.0],
       ]);
 
-      final result = LinearSumAssignment.solve(cost);
+      final result = sv.LinearSumAssignment.solve(cost);
 
       expect(result.rowIndices, equals([0]));
       expect(result.colIndices, equals([0]));
@@ -97,9 +97,9 @@ void main() {
     });
 
     test('should handle empty matrix', () {
-      final cost = NDArray([0, 0]);
+      final cost = sv.NDArray([0, 0]);
 
-      final result = LinearSumAssignment.solve(cost);
+      final result = sv.LinearSumAssignment.solve(cost);
 
       expect(result.rowIndices, isEmpty);
       expect(result.colIndices, isEmpty);
@@ -107,30 +107,31 @@ void main() {
 
     test('should reject invalid inputs', () {
       // Non-2D array
-      final vector = NDArray([3]);
-      expect(() => LinearSumAssignment.solve(vector), throwsArgumentError);
+      final vector = sv.NDArray([3]);
+      expect(() => sv.LinearSumAssignment.solve(vector), throwsArgumentError);
 
       // Matrix with NaN values
-      final costWithNaN = NDArray.fromList([
+      final costWithNaN = sv.NDArray.fromList([
         [1.0, double.nan],
         [2.0, 3.0],
       ]);
-      expect(() => LinearSumAssignment.solve(costWithNaN), throwsArgumentError);
+      expect(
+          () => sv.LinearSumAssignment.solve(costWithNaN), throwsArgumentError);
 
       // Matrix with negative infinity
-      final costWithNegInf = NDArray.fromList([
+      final costWithNegInf = sv.NDArray.fromList([
         [1.0, double.negativeInfinity],
         [2.0, 3.0],
       ]);
       expect(
-        () => LinearSumAssignment.solve(costWithNegInf),
+        () => sv.LinearSumAssignment.solve(costWithNegInf),
         throwsArgumentError,
       );
     });
 
     test('should produce same results as known solutions', () {
       // Test case from literature
-      final cost = NDArray.fromList([
+      final cost = sv.NDArray.fromList([
         [3.0, 4.0, 6.0, 4.0, 9.0],
         [6.0, 4.0, 5.0, 3.0, 8.0],
         [7.0, 5.0, 3.0, 4.0, 2.0],
@@ -138,7 +139,7 @@ void main() {
         [8.0, 4.0, 5.0, 4.0, 3.0],
       ]);
 
-      final result = LinearSumAssignment.solve(cost);
+      final result = sv.LinearSumAssignment.solve(cost);
 
       expect(result.rowIndices.length, equals(5));
       expect(result.colIndices.length, equals(5));
@@ -148,12 +149,12 @@ void main() {
     });
 
     test('should handle large cost differences', () {
-      final cost = NDArray.fromList([
+      final cost = sv.NDArray.fromList([
         [1.0, 1000.0],
         [1000.0, 1.0],
       ]);
 
-      final result = LinearSumAssignment.solve(cost);
+      final result = sv.LinearSumAssignment.solve(cost);
 
       // Should choose the diagonal assignments (0,0) and (1,1)
       expect(result.totalCost(cost), equals(2.0));

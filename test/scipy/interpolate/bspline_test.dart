@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:dart_supervision/dart_supervision.dart';
+import 'package:dart_supervision/dart_supervision.dart' as sv;
 
 void main() {
   group('BSpline Tests', () {
@@ -8,9 +8,9 @@ void main() {
       final y = [0.0, 1.0, 2.0];
       final coordinates = [x, y];
 
-      final (bspline, params) = makeSplprep(coordinates);
+      final (bspline, params) = sv.makeSplprep(coordinates);
 
-      expect(bspline, isA<BSpline>());
+      expect(bspline, isA<sv.BSpline>());
       expect(bspline.dimensions, equals(2));
       expect(bspline.k, equals(3));
       expect(params.length, equals(3));
@@ -21,7 +21,7 @@ void main() {
       final y = [0.0, 1.0, 2.0];
       final coordinates = [x, y];
 
-      final (bspline, _) = makeSplprep(coordinates);
+      final (bspline, _) = sv.makeSplprep(coordinates);
       final result = bspline.call([0.0, 0.5, 1.0]);
 
       expect(result.length, equals(2));
@@ -34,7 +34,7 @@ void main() {
       final y = [4.0, 5.0, 6.0];
       final coordinates = [x, y];
 
-      final (bspline, _) = makeSplprep(coordinates);
+      final (bspline, _) = sv.makeSplprep(coordinates);
 
       expect(bspline.t.length, greaterThan(0));
       expect(bspline.c.length, equals(2));
@@ -48,7 +48,7 @@ void main() {
       final coordinates = [x, y];
       final customParams = [0.0, 0.3, 1.0];
 
-      final (bspline, params) = makeSplprep(
+      final (bspline, params) = sv.makeSplprep(
         coordinates,
         u: customParams,
         k: 2,
@@ -65,7 +65,7 @@ void main() {
       final z = [0.0, 0.0, 1.0];
       final coordinates = [x, y, z];
 
-      final (bspline, _) = makeSplprep(coordinates);
+      final (bspline, _) = sv.makeSplprep(coordinates);
       final result = bspline.call([0.0, 0.5, 1.0]);
 
       expect(result.length, equals(3));
@@ -78,7 +78,7 @@ void main() {
       final coordinates = [x, y];
 
       // Modern interface
-      final (bspline, _) = makeSplprep(coordinates);
+      final (bspline, _) = sv.makeSplprep(coordinates);
       final modernResult = bspline.call([0.0, 0.5, 1.0]);
 
       // Legacy interface (from parametric_spline.dart)
@@ -97,12 +97,12 @@ void main() {
     });
 
     test('error handling', () {
-      expect(() => makeSplprep([]), throwsArgumentError);
-      expect(() => makeSplprep([[], []]), throwsArgumentError);
+      expect(() => sv.makeSplprep([]), throwsArgumentError);
+      expect(() => sv.makeSplprep([[], []]), throwsArgumentError);
 
       final x = [1.0, 2.0, 3.0];
       final y = [1.0, 2.0]; // Different length
-      expect(() => makeSplprep([x, y]), throwsArgumentError);
+      expect(() => sv.makeSplprep([x, y]), throwsArgumentError);
     });
   });
 }
