@@ -18,9 +18,8 @@ class NDArray {
   /// Factory constructor to create an NDArray from a shape and optional data.
   factory NDArray(List<int> shape, {List<double>? data, Type dtype = double}) {
     final size = shape.fold<int>(1, (a, b) => a * b);
-    final actualData = data != null
-        ? Float64List.fromList(data)
-        : Float64List(size);
+    final actualData =
+        data != null ? Float64List.fromList(data) : Float64List(size);
 
     if (data != null && data.length != size) {
       throw ArgumentError(
@@ -384,9 +383,8 @@ class NDArray {
 
     final result = List<double>.filled(size, 0.0);
     for (int i = 0; i < size; i++) {
-      result[i] = op(_data[_offset + i], other._data[other._offset + i])
-          ? 1.0
-          : 0.0;
+      result[i] =
+          op(_data[_offset + i], other._data[other._offset + i]) ? 1.0 : 0.0;
     }
     return NDArray(_shape, data: result, dtype: _dtype);
   }

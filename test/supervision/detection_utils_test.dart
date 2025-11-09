@@ -40,7 +40,7 @@ void main() {
         final y1 = detections.xyxy[[i, 1]];
         final x2 = detections.xyxy[[i, 2]];
         final y2 = detections.xyxy[[i, 3]];
-        
+
         expect(x1, inInclusiveRange(0.0, imageWidth.toDouble()),
             reason: 'X1 coordinate should be within image width');
         expect(x2, inInclusiveRange(0.0, imageWidth.toDouble()),
