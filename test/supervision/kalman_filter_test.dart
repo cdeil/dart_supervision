@@ -112,7 +112,8 @@ void main() {
       final track = sv.STrack(tlwh, 0.9, filter);
 
       track.markMissed();
-      expect(track.state, equals(sv.TrackState.deleted)); // Tentative -> deleted
+      expect(
+          track.state, equals(sv.TrackState.deleted)); // Tentative -> deleted
 
       // Confirmed track should not be deleted immediately
       track.state = sv.TrackState.confirmed;
