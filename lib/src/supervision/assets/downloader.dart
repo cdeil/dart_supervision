@@ -66,9 +66,8 @@ Future<String> downloadAssets(
   }
 
   // Determine output path
-  final outputPath = outputDir != null
-      ? path.join(outputDir, filename)
-      : filename;
+  final outputPath =
+      outputDir != null ? path.join(outputDir, filename) : filename;
 
   final file = File(outputPath);
   final metadata = videoAssetsMetadata[filename];
@@ -152,9 +151,8 @@ Future<String> downloadAssetsStreaming(
   }
 
   // Determine output path
-  final outputPath = outputDir != null
-      ? path.join(outputDir, filename)
-      : filename;
+  final outputPath =
+      outputDir != null ? path.join(outputDir, filename) : filename;
 
   final file = File(outputPath);
   final metadata = videoAssetsMetadata[filename];
@@ -197,22 +195,20 @@ Future<String> downloadAssetsStreaming(
     final sink = file.openWrite();
 
     try {
-      await response.stream
-          .listen(
-            (chunk) {
-              sink.add(chunk);
-              downloadedBytes += chunk.length;
-              onProgress?.call(downloadedBytes, totalBytes);
-            },
-            onDone: () {
-              sink.close();
-            },
-            onError: (error) {
-              sink.close();
-              throw error;
-            },
-          )
-          .asFuture();
+      await response.stream.listen(
+        (chunk) {
+          sink.add(chunk);
+          downloadedBytes += chunk.length;
+          onProgress?.call(downloadedBytes, totalBytes);
+        },
+        onDone: () {
+          sink.close();
+        },
+        onError: (error) {
+          sink.close();
+          throw error;
+        },
+      ).asFuture();
     } finally {
       await sink.close();
     }

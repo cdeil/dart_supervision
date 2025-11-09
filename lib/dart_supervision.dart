@@ -5,13 +5,6 @@
 /// and scipy libraries.
 library;
 
-export 'src/dart_supervision_base.dart';
-
-// Export all supervision modules
 export 'src/supervision/supervision.dart';
-
-// Export numpy-like functionality
 export 'src/numpy/ndarray.dart';
-
-// Export scipy modules
 export 'src/scipy/scipy.dart';
