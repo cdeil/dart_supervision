@@ -7,10 +7,14 @@ library supervision;
 
 // Core detection and tracking functionality
 export 'detections.dart';
+export 'detection_utils.dart';
 export 'byte_tracker.dart';
 export 'kalman_filter.dart';
 export 'matching.dart';
 export 'iou.dart';
+
+// Annotators for drawing detections on images
+export 'annotators/annotators.dart';
 
 // Assets module for downloading example videos
 export 'assets/assets.dart';

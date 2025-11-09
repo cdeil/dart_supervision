@@ -1,0 +1,33 @@
+# Python files - used for development/testing only
+
+assets/pyproject.toml
+assets/generate_detections.py
+assets/_.py
+.venv/
+**pycache**/
+_.pyc
+_.pyo
+_.pyd
+.pytest_cache/
+
+# Python generated files
+
+yolo11n.pt
+
+# IDE files
+
+.vscode/
+.idea/
+_.swp
+_.swo
+\*~
+
+# OS files
+
+.DS_Store
+Thumbs.db
+
+# Development documentation (keep for repo but exclude from package)
+
+IMPLEMENTATION.md
+PYTHON.md

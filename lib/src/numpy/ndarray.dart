@@ -349,6 +349,24 @@ class NDArray {
     return NDArray(_shape, data: result, dtype: _dtype);
   }
 
+  /// Returns a new array with each element rounded to the nearest integer.
+  NDArray round() {
+    final result = List<double>.filled(size, 0.0);
+    for (int i = 0; i < size; i++) {
+      result[i] = _data[_offset + i].roundToDouble();
+    }
+    return NDArray(_shape, data: result, dtype: _dtype);
+  }
+
+  /// Returns a new array with each element clamped to the specified range.
+  NDArray clamp(double min, double max) {
+    final result = List<double>.filled(size, 0.0);
+    for (int i = 0; i < size; i++) {
+      result[i] = _data[_offset + i].clamp(min, max);
+    }
+    return NDArray(_shape, data: result, dtype: _dtype);
+  }
+
   /// Applies a comparison operation with scalar, returning boolean array.
   NDArray _comparisonScalar(bool Function(double) op) {
     final result = List<double>.filled(size, 0.0);
