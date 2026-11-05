@@ -11,6 +11,9 @@ void main() async {
   // Read the GIF image
   final gifBytes = await File('assets/people-walking.gif').readAsBytes();
   final image = img.decodeGif(gifBytes);
+  if (image == null) {
+    throw const FormatException('Could not decode assets/people-walking.gif');
+  }
 
   // Load all detection data
   final allDetections = await sv.DetectionUtils.loadAllFramesFromJson(
